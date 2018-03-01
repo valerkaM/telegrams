@@ -5,11 +5,8 @@ defusedxml==0.5.0
 grab==0.6.38
 idna==2.6
 lxml==4.1.1
-post==0.0.0
 public==0.0.46
 pytils==0.3
-query-string==0.0.0
-request==0.0.0
 requests==2.18.4
 selection==0.0.13
 setupfiles==0.0.50
