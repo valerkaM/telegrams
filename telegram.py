@@ -2,71 +2,107 @@ import requests
 import datetime
 from time import sleep
 
-class BotHandler:
+# class BotHandler:
 
-    def __init__(self, token):
-        self.token = token
-        self.api_url = "https://api.telegram.org/bot{}/".format(token)
+#     def __init__(self, token):
+#         self.token = token
+#         self.api_url = "https://api.telegram.org/bot{}/".format(token)
 
-    def get_updates(self, offset=None, timeout=30):
-        method = 'getUpdates'
-        params = {'timeout': timeout, 'offset': offset}
-        resp = requests.get(self.api_url + method, params)
-        result_json = resp.json()['result']
-        return result_json
+#     def get_updates(self, offset=None, timeout=30):
+#         method = 'getUpdates'
+#         params = {'timeout': timeout, 'offset': offset}
+#         resp = requests.get(self.api_url + method, params)
+#         result_json = resp.json()['result']
+#         return result_json
 
-    def send_message(self, chat_id, text):
-        params = {'chat_id': chat_id, 'text': text}
-        method = 'sendMessage'
-        resp = requests.post(self.api_url + method, params)
-        return resp
+#     def send_message(self, chat_id, text):
+#         params = {'chat_id': chat_id, 'text': text}
+#         method = 'sendMessage'
+#         resp = requests.post(self.api_url + method, params)
+#         return resp
 
-    def get_last_update(self):
-        get_result = self.get_updates()
+#     def get_last_update(self):
+#         get_result = self.get_updates()
 
-        if len(get_result) > 0:
-            last_update = get_result[len(get_result)-1]
-        else:
-            last_update = get_result[len(get_result)]
+#         if len(get_result) > 0:
+#             last_update = get_result[len(get_result)-1]
+#         else:
+#             last_update = get_result[len(get_result)]
 
-        return last_update
+#         return last_update
 
-token = '506036637:AAF3ZwlVe9u8zffSjlucLWZNYD34RxqMFGw'
-greet_bot = BotHandler(token)  
-greetings = ('здравствуй', 'привет', 'ку', 'здорово')  
-now = datetime.datetime.now()
+# token = '506036637:AAF3ZwlVe9u8zffSjlucLWZNYD34RxqMFGw'
+# greet_bot = BotHandler(token)  
+# greetings = ('здравствуй', 'привет', 'ку', 'здорово')  
+# now = datetime.datetime.now()
 
+
+# def main():  
+
+#     today = now.day
+#     hour = now.hour
+
+#     while True:
+#         last_update = greet_bot.get_last_update()
+
+#         last_update_id = last_update['update_id']
+#         last_chat_text = last_update['message']['text']
+#         last_chat_id = last_update['message']['chat']['id']
+#         last_chat_name = last_update['message']['chat']['first_name']
+
+#         if last_chat_text.lower() in greetings and today == now.day and 6 <= hour < 12:
+#             greet_bot.send_message(last_chat_id, 'Доброе утро, {}'.format(last_chat_name))
+#             today += 1
+
+#         elif last_chat_text.lower() in greetings and today == now.day and 12 <= hour < 17:
+#             greet_bot.send_message(last_chat_id, 'Добрый день, {}'.format(last_chat_name))
+#             today += 1
+
+#         elif last_chat_text.lower() in greetings and today == now.day and 17 <= hour < 24:
+#             greet_bot.send_message(last_chat_id, 'Добрый вечер, {}'.format(last_chat_name))
+#             today += 1
+#         elif last_chat_text.lower() in greetings and today == now.day and 00 <= hour < 6:
+#             greet_bot.send_message(last_chat_id, 'Здраствуйте, {}'.format(last_chat_name))
+#             today += 1
+
+# if __name__ == '__main__':  
+#     try:
+#         main()
+#     except KeyboardInterrupt:
+#         exit()
+
+url = "https://api.telegram.org/bot506036637:AAF3ZwlVe9u8zffSjlucLWZNYD34RxqMFGw/"
+
+def get_updates_json(request):  
+    params = {'timeout': 30, 'offset': None}
+    response = requests.get(request + 'getUpdates')
+    return response.json()
+
+
+def last_update(data):  
+    results = data['result']
+    total_updates = len(results) - 1
+    return results[total_updates]
+
+def get_info(update):  
+    info = {'chat_id': '', 'text': ''}
+    info['chat_id'] = update['message']['chat']['id']
+    info['text'] = update['message']['text']
+    return info
+
+def send_mess(chat, text):  
+    params = {'chat_id': chat, 'text': text}
+    response = requests.post(url + 'sendMessage', data=params)
+    return response
 
 def main():  
-
-    today = now.day
-    hour = now.hour
-
+    update_id = last_update(get_updates_json(url))['update_id']
     while True:
-        last_update = greet_bot.get_last_update()
-
-        last_update_id = last_update['update_id']
-        last_chat_text = last_update['message']['text']
-        last_chat_id = last_update['message']['chat']['id']
-        last_chat_name = last_update['message']['chat']['first_name']
-
-        if last_chat_text.lower() in greetings and today == now.day and 6 <= hour < 12:
-            greet_bot.send_message(last_chat_id, 'Доброе утро, {}'.format(last_chat_name))
-            today += 1
-
-        elif last_chat_text.lower() in greetings and today == now.day and 12 <= hour < 17:
-            greet_bot.send_message(last_chat_id, 'Добрый день, {}'.format(last_chat_name))
-            today += 1
-
-        elif last_chat_text.lower() in greetings and today == now.day and 17 <= hour < 24:
-            greet_bot.send_message(last_chat_id, 'Добрый вечер, {}'.format(last_chat_name))
-            today += 1
-        elif last_chat_text.lower() in greetings and today == now.day and 0 <= hour < 6:
-            greet_bot.send_message(last_chat_id, 'Здраствуйте, {}'.format(last_chat_name))
-            today += 1
+        if update_id == last_update(get_updates_json(url))['update_id']:
+            info = get_info(last_update(get_updates_json(url)))
+            send_mess(info['chat_id'], 'Добрый 'info['text'])
+            update_id += 1
+        sleep(1)       
 
 if __name__ == '__main__':  
-    try:
-        main()
-    except KeyboardInterrupt:
-        exit()
+    main()
