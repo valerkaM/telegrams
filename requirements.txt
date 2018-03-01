@@ -9,7 +9,6 @@ public==0.0.46
 pytils==0.3
 requests==2.18.4
 selection==0.0.13
-setupfiles==0.0.50
 six==1.11.0
 tqdm==4.19.4
 urllib3==1.22
